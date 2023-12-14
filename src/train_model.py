@@ -4,13 +4,14 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import RadiusNeighborsClassifier
 from sklearn.linear_model import LinearRegression
+from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 import pandas as pd
-from sklearn.metrics import accuracy_score, precision_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn import preprocessing
 
 
-out_dir = 'experiments/balanced_goals_linear_and_results2.0'
+out_dir = 'experiments/deployment'
 os.mkdir(out_dir)
 file = 'src\data\csvs\\balanced_goals_and_results2.0.csv'
 
@@ -50,7 +51,7 @@ data = data.drop(columns=['home_team_score', 'away_team_score', 'home_team_resul
 #split
 x_train, x_test, y_train, y_test = train_test_split(data, Y)
 #create models
-model = LinearRegression()
+model = DecisionTreeClassifier()
 
 #fit models
 model.fit(x_train, y_train)
@@ -106,18 +107,20 @@ accuracy = accuracy_score(actual_results, predicted_results)
 # Calculate precision for each class
 precision = precision_score(actual_results, predicted_results, average=None, labels=['Win', 'Lose', 'Draw'])
 
+recall = recall_score(actual_results, predicted_results, average=None, labels=['Win', 'Lose', 'Draw'])
+
 # Print accuracy and precision for each class
 print(f"Accuracy: {accuracy}")
-print("Precision for each class:")
-for label, prec in zip(['Win', 'Lose', 'Draw'], precision):
-    print(f"{label}: {prec}")
+print("Precision and recall for each class:")
+for label, prec, rec in zip(['Win', 'Lose', 'Draw'], precision, recall):
+    print(f"{label}: precision: {prec}, recall: {rec}\n")
 
 
 with open(f'{out_dir}/log.txt', 'a') as writer:
     writer.write(f'Accuracy: {accuracy}\n')
-    writer.write("Precision for each class:\n")
-    for label, prec in zip(['Win', 'Lose', 'Draw'], precision):
-        writer.write(f"\t{label}: {prec}\n")
+    writer.write("Precision and recall for each class:\n")
+    for label, prec, rec in zip(['Win', 'Lose', 'Draw'], precision, recall):
+        writer.write(f"{label}: precision: {prec}, recall: {rec}\n")
 
 with open(f'{out_dir}/model.pkl', 'wb') as f:
     pickle.dump(model, f)

@@ -42,9 +42,11 @@ for i in range(len(data['date'])):
     dates.append(data['date'][i].split('-')[0])
 data['date'] = dates
 
+# data.to_csv('src/data/csvs/original.csv')
+
 filtered_df = data[(data['home_team_score'] <= 7)]
 filtered_df = filtered_df[(filtered_df['away_team_score'] <= 7)]
-# filtered_df.to_csv('src/data/csvs/removed_outliers.csv')
+filtered_df.to_csv('src/data/csvs/removed_outliers.csv')
 
 data = filtered_df
 
